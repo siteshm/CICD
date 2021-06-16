@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none
     environment {
         PROJECT_ID = 'arctic-robot-278510'
         CLUSTER_NAME = 'cluster-1'
