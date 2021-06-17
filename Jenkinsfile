@@ -1,6 +1,5 @@
 pipeline {
     agent any
-    properties([parameters([string(defaultValue: '25%', description: 'maxSurge: The number of pods that can be created above the desired amount of pods during an update', name: 'maxSurge'), string(defaultValue: '25%', description: 'maxUnavailable: The number of pods that can be unavailable during the update process', name: 'maxUnavailable')])])
     environment {
         PROJECT_ID = 'arctic-robot-278510'
         CLUSTER_NAME = 'cluster-1'
@@ -8,6 +7,12 @@ pipeline {
         CREDENTIALS_ID = 'gke'
     }
     stages {
+        stage('Setup parameters') {
+            steps {
+                script { properties([parameters([string(defaultValue: '25%', description: 'maxSurge: The number of pods that can be created above the desired amount of pods during an update', name: 'maxSurge'), string(defaultValue: '25%', description: 'maxUnavailable: The number of pods that can be unavailable during the update process', name: 'maxUnavailable')])])
+                       }
+            }
+        }
         stage("Checkout code") {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/siteshm/CICD.git']]])
