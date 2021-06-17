@@ -9,7 +9,6 @@ spec:
   selector:
     matchLabels:
       app: hello
-      version: App_Version
   strategy:
     type: RollingUpdate
     rollingUpdate:
