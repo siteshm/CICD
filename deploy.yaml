@@ -5,8 +5,8 @@ name: hello
 labels:
   app: hello
 spec:
-strategy:
-  type: Recreate
+  strategy:
+        type: Recreate
 template:
   metadata:
     labels:
