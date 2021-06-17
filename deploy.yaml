@@ -4,11 +4,13 @@ metadata:
   name: hello
   labels:
     app: hello
+    version: App_Version
 spec:
   replicas: TotalPod
   selector:
     matchLabels:
       app: hello
+      version: App_Version
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,7 +20,7 @@ spec:
     metadata:
       labels:
         app: hello
-        version: v1.0.1
+        version: App_Version
         tier: hello
     spec:
       containers:
