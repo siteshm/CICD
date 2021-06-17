@@ -27,6 +27,12 @@ spec:
         ports:
         - containerPort: 5000
           name: hello
+        livenessProbe:
+          httpGet:
+            path: /health-check
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
 
 ---
 apiVersion: v1
