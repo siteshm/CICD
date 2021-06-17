@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Setup parameters') {
             steps {
-                script { properties([parameters([string(defaultValue: '2', description: 'maxSurge: The number of pods that can be created above the desired amount of pods during an update', name: 'maxSurge'), string(defaultValue: '1', description: 'maxUnavailable: The number of pods that can be unavailable during the update process', name: 'maxUnavailable')])])
+                script { properties([parameters([string(defaultValue: '2', description: 'maxSurge: The number of pods that can be created above the desired amount of pods during an update', name: 'MaxSurge'), string(defaultValue: '1', description: 'maxUnavailable: The number of pods that can be unavailable during the update process', name: 'MaxUnavailable')])])
                        }
             }
         }
