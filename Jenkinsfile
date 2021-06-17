@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Setup parameters') {
             steps {
-                script { properties([parameters([string(defaultValue: '2', description: 'maxSurge: The number of pods that can be created above the desired amount of pods during an update', name: 'MaxSurge'), string(defaultValue: '1', description: 'maxUnavailable: The number of pods that can be unavailable during the update process', name: 'MaxUnavailable'), string(defaultValue: '5', description: 'Number of Replicas', name: 'TotalPod')])])
+                script { properties([parameters([string(defaultValue: '2', description: 'maxSurge: The number of pods that can be created above the desired amount of pods during an update', name: 'MaxSurge'), string(defaultValue: '1', description: 'maxUnavailable: The number of pods that can be unavailable during the update process', name: 'MaxUnavailable'), string(defaultValue: '5', description: 'Number of Replicas', name: 'TotalPod'), string(defaultValue: 'v1.0.0', description: 'Update the latest app version', name: 'App_Version')])])
                        }
             }
         }
@@ -42,6 +42,7 @@ pipeline {
                 sh "sed -i 's/MaxSurge/${MaxSurge}/g' deploy.yaml"
                 sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' deploy.yaml"
                 sh "sed -i 's/TotalPod/${TotalPod}/g' deploy.yaml"
+                sh "sed -i 's/App_Version/${App_Version}/g' deploy.yaml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
         }
