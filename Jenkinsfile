@@ -38,7 +38,7 @@ pipeline {
         }        
         stage('Deploy to Kubernetes cluster - Rolling Update ') {
             steps{
-                sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' canary.yaml"
+                sh "sed -i 's/hello:canary/hello:${env.BUILD_ID}/g' canary.yaml"
                 sh "sed -i 's/MaxSurge/${MaxSurge}/g' canary.yaml"
                 sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' canary.yaml"
                 sh "sed -i 's/TotalPod/${TotalPod}/g' canary.yaml"
