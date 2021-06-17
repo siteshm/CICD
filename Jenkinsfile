@@ -38,10 +38,10 @@ pipeline {
         }        
         stage('Deploy to Kubernetes cluster - Rolling Update ') {
             steps{
-                sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' deploy.yaml"
-                sh "sed -i 's/MaxSurge/${MaxSurge}/g' deploy.yaml"
-                sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' deploy.yaml"
-                sh "sed -i 's/TotalPod/${TotalPod}/g' deploy.yaml"
+                sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' canary.yaml"
+                sh "sed -i 's/MaxSurge/${MaxSurge}/g' canary.yaml"
+                sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' canary.yaml"
+                sh "sed -i 's/TotalPod/${TotalPod}/g' canary.yaml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
