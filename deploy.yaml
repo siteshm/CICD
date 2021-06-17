@@ -1,12 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-name: hello
-labels:
-  app: hello
+  name: hello
+  labels:
+    app: hello
 spec:
-  strategy:
-        type: Recreate
+  strategy: Recreate
 template:
   metadata:
     labels:
