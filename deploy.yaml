@@ -4,7 +4,6 @@ metadata:
   name: hello
   labels:
     app: hello
-    version: App_Version
 spec:
   replicas: TotalPod
   selector:
