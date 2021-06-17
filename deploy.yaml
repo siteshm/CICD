@@ -44,11 +44,13 @@ metadata:
   name: hello
   labels:
     app: hello
+    version: App_Version
 spec:
   ports:
     - port: 5000
       targetPort: 5000
   selector:
     app: hello
+    version: App_Version
     tier: hello
   type: LoadBalancer
