@@ -37,7 +37,6 @@ pipeline {
             }
         }        
         stage('Deploy to Kubernetes cluster - Rolling Update ') {
-            when { branch 'canary' }
             steps{
                 sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' deploy.yaml"
                 sh "sed -i 's/MaxSurge/${MaxSurge}/g' deploy.yaml"
