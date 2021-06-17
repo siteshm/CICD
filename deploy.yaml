@@ -5,7 +5,8 @@ metadata:
   labels:
     app: hello
 spec:
-  strategy: Recreate
+  strategy:
+    type: RollingUpdate
 template:
   metadata:
     labels:
