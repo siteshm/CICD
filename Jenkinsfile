@@ -1,5 +1,11 @@
 pipeline {
     agent any
+    properties([
+            parameters([
+            string(defaultValue: "25%", description: 'maxSurge: The number of pods that can be created above the desired amount of pods during an update', name: 'maxSurge'),
+            string(defaultValue: "25%", description: 'maxUnavailable: The number of pods that can be unavailable during the update process', name: 'maxUnavailable')
+            ])
+        ])
     environment {
         PROJECT_ID = 'arctic-robot-278510'
         CLUSTER_NAME = 'cluster-1'
@@ -30,9 +36,11 @@ pipeline {
                 }
             }
         }        
-        stage('Deploy to GKE') {
+        stage('Deploy to Kubernetes cluster - Rolling Update ') {
             steps{
                 sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' deploy.yaml"
+                sh "sed -i 's/maxSurge/${maxSurge}/g' deploy.yaml"
+                sh "sed -i 's/maxSurge/${maxUnavailable}/g' deploy.yaml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
         }
