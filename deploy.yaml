@@ -7,11 +7,11 @@ metadata:
 spec:
   strategy:
     type: RollingUpdate
-template:
-  metadata:
-    labels:
-      app: hello
-      tier: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+        tier: hello
   spec:
     containers:
     - name: hello
