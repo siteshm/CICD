@@ -5,6 +5,9 @@ metadata:
   labels:
     app: hello
 spec:
+  selector:
+    matchLabels:
+      app: hello
   strategy:
     type: RollingUpdate
   template:
