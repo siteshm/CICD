@@ -18,7 +18,7 @@ spec:
     metadata:
       labels:
         app: hello
-        version: v1.0.0
+        version: v1.0.1
         tier: hello
     spec:
       containers:
