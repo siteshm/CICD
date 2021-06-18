@@ -36,7 +36,7 @@ pipeline {
             }
         }   
 		stage('Deploy to Kubernetes cluster - Canary Deployment') {
-            when { branch 'canary_test' }
+            //when { branch 'canary_test' }
 			environment {
 			    CANARY_REPLICAS = 3
 			}
@@ -49,9 +49,9 @@ pipeline {
             }
         }
         stage('DeployToProduction') {
-            when {
-                branch 'canary_test'
-            }
+            //when {
+                //branch 'canary_test'
+            //}
             environment { 
                 CANARY_REPLICAS = 0
             }
