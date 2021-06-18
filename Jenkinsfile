@@ -46,7 +46,7 @@ pipeline {
                 //sh "sed -i 's/MaxSurge/${MaxSurge}/g' canary.yaml"
                 //sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' canary.yaml"
 		//sh "sed -i 's/CANARY_REPLICAS/${CANARY_REPLICAS}/g' canary.yaml"
-		sh "export CANARY_REPLICAS=${Canary_Replicas} && envsubst < canary.yaml"
+		sh "export CANARY_REPLICAS=${Canary_Replicas} && envsubst < canary.yaml | echo ' replica value replaced '"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
@@ -63,7 +63,7 @@ pipeline {
                 milestone(1)
 		// Canary Yaml
 		//sh "sed -i 's/${CANARY_REPLICAS}/0/g' canary.yaml"
-		sh "export CANARY_REPLICAS=0 && envsubst < canary.yaml"
+		sh "export CANARY_REPLICAS=0 && envsubst < canary.yaml | echo ' replica value replaced '"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 		// Deploy Yaml
 		sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' deploy.yaml"
