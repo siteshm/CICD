@@ -9,15 +9,14 @@ pipeline {
     stages {
         stage('Setup parameters') {
             steps {
-                script { properties([parameters([string(defaultValue: '2', description: 'maxSurge: The number of pods that can be created above the desired amount of pods during an update', name: 'MaxSurge'), string(defaultValue: '1', description: 'maxUnavailable: The number of pods that can be unavailable during the update process', name: 'MaxUnavailable'), string(defaultValue: '5', description: 'Number of Replicas', name: 'TotalPod')])])
+                script { properties([parameters([string(defaultValue: '2', description: 'maxSurge: The number of pods that can be created above the desired amount of pods during an update', name: 'MaxSurge'), string(defaultValue: '1', description: 'maxUnavailable: The number of pods that can be unavailable during the update process', name: 'MaxUnavailable')])])
                        }
             }
         }
         stage("Checkout code") {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/canary']], extensions: [], userRemoteConfigs: [[credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/siteshm/CICD.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/canary_test']], extensions: [], userRemoteConfigs: [[credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/siteshm/CICD.git']]])
             }
-            //git credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/siteshm/CICD.git'
         }
         stage("Build image") {
             steps {
@@ -35,17 +34,37 @@ pipeline {
                     }
                 }
             }
-        }        
-        stage('Deploy to Kubernetes cluster - Rolling Update ') {
-            when { branch 'canary' }
+        }   
+		stage('Deploy to Kubernetes cluster - Canary Deployment') {
+            when { branch 'canary_test' }
+			environment {
+			    CANARY_REPLICAS = 3
+			}
             steps{
                 sh "sed -i 's/hello:canary/hello:${env.BUILD_ID}/g' canary.yaml"
                 sh "sed -i 's/MaxSurge/${MaxSurge}/g' canary.yaml"
                 sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' canary.yaml"
-                sh "sed -i 's/TotalPod/${TotalPod}/g' canary.yaml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
         }
-    }    
+        stage('DeployToProduction') {
+            when {
+                branch 'canary_test'
+            }
+            environment { 
+                CANARY_REPLICAS = 0
+            }
+            steps {
+                input 'Deploy to Production?'
+                milestone(1)
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+				sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' deploy.yaml"
+                sh "sed -i 's/MaxSurge/${MaxSurge}/g' deploy.yaml"
+                sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' deploy.yaml"
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+				step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+            }
+        }
+    }
 }
