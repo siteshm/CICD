@@ -36,6 +36,7 @@ pipeline {
             }
         }   
 		stage('Deploy to Kubernetes cluster - Canary Deployment') {
+	// when condition work on multibranch pipeline 
             //when { branch 'canary_test' }
 			//environment {
 			    //CANARY_REPLICAS = 3
