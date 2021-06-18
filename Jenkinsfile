@@ -9,7 +9,7 @@ pipeline {
     stages {
         //stage('Setup parameters') {
             //steps {
-                //script { properties([parameters([string(defaultValue: '3', description: 'No of canary app replicas', name: 'CANARY_REPLICAS')])])
+                //script { properties([parameters([string(defaultValue: '3', description: 'No of canary app replicas', name: 'Canary_Replicas')])])
                       // }
             //}
         //}
@@ -38,14 +38,15 @@ pipeline {
 		stage('Deploy to Kubernetes cluster - Canary Deployment') {
 	// when condition work on multibranch pipeline 
             //when { branch 'canary_test' }
-			environment {
-			    CANARY_REPLICAS = 3
-			}
+			//environment {
+			    //CANARY_REPLICAS = 3
+			//}
             steps{
                 sh "sed -i 's/hello:canary/hello:${env.BUILD_ID}/g' canary.yaml"
                 //sh "sed -i 's/MaxSurge/${MaxSurge}/g' canary.yaml"
                 //sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' canary.yaml"
 		//sh "sed -i 's/CANARY_REPLICAS/${CANARY_REPLICAS}/g' canary.yaml"
+		sh "export CANARY_REPLICAS=${Canary_Replicas} && envsubst < canary.yaml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
@@ -54,18 +55,18 @@ pipeline {
             //when {
                 //branch 'canary_test'
             //}
-            environment { 
-                CANARY_REPLICAS = 0
-            }
+            //environment { 
+                //CANARY_REPLICAS = 0
+            //}
             steps {
                 input 'Deploy to Production?'
-                //milestone(1)
-		sh "sed -i 's/hello:canary/hello:${env.BUILD_ID}/g' canary.yaml"
+                milestone(1)
+		// Canary Yaml
 		//sh "sed -i 's/${CANARY_REPLICAS}/0/g' canary.yaml"
+		sh "export CANARY_REPLICAS=0 && envsubst < canary.yaml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+		// Deploy Yaml
 		sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' deploy.yaml"
-                //sh "sed -i 's/MaxSurge/${MaxSurge}/g' deploy.yaml"
-                //sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' deploy.yaml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
