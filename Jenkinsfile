@@ -59,11 +59,11 @@ pipeline {
                 input 'Deploy to Production?'
                 milestone(1)
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-				sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' deploy.yaml"
+		sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' deploy.yaml"
                 sh "sed -i 's/MaxSurge/${MaxSurge}/g' deploy.yaml"
                 sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' deploy.yaml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-				step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
         }
     }
