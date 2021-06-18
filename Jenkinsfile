@@ -7,12 +7,12 @@ pipeline {
         CREDENTIALS_ID = 'gke'
     }
     stages {
-        //stage('Setup parameters') {
-            //steps {
-                //script { properties([parameters([string(defaultValue: '3', description: 'No of canary app replicas', name: 'Canary_Replicas')])])
-                      // }
-            //}
-        //}
+        stage('Setup parameters') {
+            steps {
+                script { properties([parameters([string(defaultValue: '3', description: 'No of canary app replicas', name: 'Canary_Replicas')])])
+                       }
+            }
+        }
         stage("Checkout code") {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/canary_test']], extensions: [], userRemoteConfigs: [[credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/siteshm/CICD.git']]])
