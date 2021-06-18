@@ -61,8 +61,7 @@ pipeline {
                 input 'Deploy to Production?'
                 milestone(1)
 		// Canary Yaml
-		//sh "sed -i 's/${CANARY_REPLICAS}/0/g' canary.yaml"
-		sh "sed 's/^\(\s*replicas\s*:\s*\).*/\10/' canary.yaml"
+		sh "sed -i 's/${CANARY_REPLICAS}/0/g' canary.yaml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 		// Deploy Yaml
 		sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' deploy.yaml"
