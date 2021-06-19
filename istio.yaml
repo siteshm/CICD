@@ -32,13 +32,13 @@ spec:
         subset: v1
         port:
           number: 5000
-      weight: 90
+      weight: Prod_Route
     - destination:
         host: helloworld
         subset: v2
         port:
           number: 5000
-      weight: 95
+      weight: Canary_Route
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
