@@ -39,7 +39,7 @@ pipeline {
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
                 input message: 'Switch traffic to green', parameters: [string(defaultValue: '100', description: 'Switch complete traffic to Green', name: 'CompleteBlueGreen')]
 		sh "sed -i 's/${Canary_Route}/0/g' istio.yaml"
-		sh "sed -i 's/${Prod_Route}/${CompleteBlueGreen}/g' istio.yaml"
+		sh "sed -i 's/${Prod_Route}/100/g' istio.yaml"
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 		sh "echo 'Blue Green Deployment Completed. "
             }
