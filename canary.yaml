@@ -1,27 +1,29 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-canary
+  name: helloworld-v2
   labels:
-    app: hello
+    app: helloworld
+    version: v2
 spec:
   replicas: CANARY_REPLICAS
   selector:
     matchLabels:
-      app: hello
+      app: helloworld
+      version: v2
   template:
     metadata:
       labels:
-        app: hello
-        tier: hello
+        app: helloworld
+        version: v2
     spec:
       containers:
-      - name: hello
-        image: siteshm/hello:canary
+      - name: helloworld
+        image: siteshm/helloworld:canary
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
-          name: hello
         livenessProbe:
           httpGet:
             path: /health-check
