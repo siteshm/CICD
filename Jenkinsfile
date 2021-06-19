@@ -9,51 +9,20 @@ pipeline {
     stages {
         stage('Setup parameters') {
             steps {
-                script { properties([parameters([string(defaultValue: '90', description: 'Prod routing weight', name: 'Prod_Route'), string(defaultValue: '10', description: 'Canary routing weight', name: 'Canary_Route')])])
+                script { properties([parameters([string(defaultValue: 'helloworld:2', description: 'Please enter Docker Image Version', name: 'Docker_Image_Version'), string(defaultValue: '10', description: 'Canary routing weight', name: 'Canary_Route')])])
                        }
             }
         }
         stage("Checkout code") {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/test_istio']], extensions: [], userRemoteConfigs: [[credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/siteshm/CICD.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/Initial_Release']], extensions: [], userRemoteConfigs: [[credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/siteshm/CICD.git']]])
             }
-        }
-        stage("Build image") {
-            steps {
-                script {
-                    myapp = docker.build("siteshm/helloworld:${env.BUILD_ID}")
-                }
-            }
-        }
-        stage("Push image") {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                            myapp.push("latest")
-                            myapp.push("${env.BUILD_ID}")
-                    }
-                }
-            }
-        }   
-		stage('Deploy to Kubernetes cluster - Canary Deployment') {
+        } 
+		stage('Deploy to Kubernetes cluster - Initial Release') {
             steps{
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'service.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-                sh "sed -i 's/helloworld:canary/helloworld:${env.BUILD_ID}/g' canary.yaml"
-                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-		sh "sed -i 's/helloworld:latest/hello:${env.BUILD_ID}/g' deploy.yaml"
-		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-		sh "sed -i 's/Prod_Route/${Prod_Route}/g' istio.yaml"
-		sh "sed -i 's/Canary_Route/${Canary_Route}/g' istio.yaml"    
-		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-            }
-        }
-        stage('Complete Canary Deployment') {
-            steps {
-                input message: 'Select Complete Canary', parameters: [choice(choices: ['100'], description: 'Complete Canary - Prod Route Percentage', name: 'CompleteCanary')]
-		sh "sed -i 's/${Canary_Route}/0/g' istio.yaml"
-		sh "sed -i 's/${Prod_Route}/${CompleteCanary}/g' istio.yaml"
-		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-		sh "echo 'Canary Completed. "
+                sh "sed -i 's/helloworld:latest/${Docker_Image_Version}/g' initialrelease.yaml"
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'initialrelease.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
         }
     }
