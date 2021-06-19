@@ -23,10 +23,7 @@ spec:
   gateways:
   - helloworld-gateway
   http:
-  - match:
-    - uri:
-        prefix: /
-    route:
+  - route:
     - destination:
         host: helloworld
         subset: v1
