@@ -49,10 +49,10 @@ pipeline {
         }
         stage('Complete Canary Deployment') {
             steps {
-                input message: 'Select Complete Canary', parameters: [choice(choices: ['100'], description: 'Complete Canary - Prod Route Percentage', name: 'Complete_Canary')]
+                input message: 'Select Complete Canary', parameters: [choice(choices: ['100'], description: 'Complete Canary - Prod Route Percentage', name: 'CompleteCanary')]
                 milestone(1)
 		sh "sed -i 's/${Canary_Route}/0/g' istio.yaml"
-		sh "sed -i 's/${Prod_Route}/${Complete_Canary}/g' istio.yaml"
+		sh "sed -i 's/${Prod_Route}/${CompleteCanary}/g' istio.yaml"
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 		sh "echo 'Canary Completed. "
             }
