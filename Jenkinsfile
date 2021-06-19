@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Setup parameters') {
             steps {
-                script { properties([parameters([string(defaultValue: '90', description: 'Prod routing weight', name: 'Prod_Route'), string(defaultValue: '10', description: 'Canary routing weight', name: 'Canary_Route')])])
+                script { properties([parameters([string(defaultValue: '50', description: 'Blue routing weight', name: 'Prod_Route'), string(defaultValue: '50', description: 'Green routing weight', name: 'Canary_Route'), string(defaultValue: 'helloworld:latest', description: 'Please enter Docker Latest Image Version', name: 'Docker_Image_Version')])])
                        }
             }
         }
@@ -18,42 +18,26 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/test_istio']], extensions: [], userRemoteConfigs: [[credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/siteshm/CICD.git']]])
             }
         }
-        stage("Build image") {
-            steps {
-                script {
-                    myapp = docker.build("siteshm/helloworld:${env.BUILD_ID}")
-                }
-            }
-        }
-        stage("Push image") {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                            myapp.push("latest")
-                            myapp.push("${env.BUILD_ID}")
-                    }
-                }
-            }
-        }   
-		stage('Deploy to Kubernetes cluster - Canary Deployment') {
+           
+	stage('Deploy to Kubernetes cluster - Blue-Green Deployment') {
             steps{
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'service.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-                sh "sed -i 's/helloworld:canary/helloworld:${env.BUILD_ID}/g' canary.yaml"
+                sh "sed -i 's/helloworld:canary/${Docker_Image_Version}/g' canary.yaml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-		sh "sed -i 's/helloworld:latest/hello:${env.BUILD_ID}/g' deploy.yaml"
+		sh "sed -i 's/helloworld:latest/${Docker_Image_Version}/g' deploy.yaml"
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 		sh "sed -i 's/Prod_Route/${Prod_Route}/g' istio.yaml"
 		sh "sed -i 's/Canary_Route/${Canary_Route}/g' istio.yaml"    
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
         }
-        stage('Complete Canary Deployment') {
+        stage('Deployment to PROD - Green') {
             steps {
-                input message: 'Select Complete Canary', parameters: [choice(choices: ['100'], description: 'Complete Canary - Prod Route Percentage', name: 'CompleteCanary')]
+                input message: 'Switch traffic to green', parameters: [string(defaultValue: '100', description: 'Switch complete traffic to Green', name: 'CompleteBlueGreen')]
 		sh "sed -i 's/${Canary_Route}/0/g' istio.yaml"
-		sh "sed -i 's/${Prod_Route}/${CompleteCanary}/g' istio.yaml"
+		sh "sed -i 's/${Prod_Route}/${CompleteBlueGreen}/g' istio.yaml"
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-		sh "echo 'Canary Completed. "
+		sh "echo 'Blue Green Deployment Completed. "
             }
         }
     }
