@@ -32,6 +32,7 @@ pipeline {
         }
         stage('Deployment to PROD - Green') {
             steps {
+		input message: 'Proceed to Green Deployment ?'
 		sh "sed -i 's/${CANARY_REPLICAS}/0/g' canary.yaml"
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 		sh "sed -i 's/helloworld:latest/${Docker_Image_Version}/g' deploy.yaml"
