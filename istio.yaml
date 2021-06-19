@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: hello-gateway
+  name: helloworld-gateway
 spec:
   selector:
     istio: ingressgateway
@@ -16,26 +16,26 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: hello
+  name: helloworld
 spec:
   hosts:
   - "*"
   gateways:
-  - hello-gateway
+  - helloworld-gateway
   http:
   - match:
     - uri:
         prefix: /
     route:
     - destination:
-        host: hello
-        subset: prod
+        host: helloworld
+        subset: v1
         port:
           number: 5000
-      weight: 5
+      weight: 90
     - destination:
-        host: hello
-        subset: canary
+        host: helloworld
+        subset: v2
         port:
           number: 5000
       weight: 95
@@ -43,13 +43,13 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: hello
+  name: helloworld
 spec:
-  host: hello
+  host: helloworld
   subsets:
-  - name: prod
+  - name: v1
     labels:
-      version: prod
-  - name: canary
+      version: v1
+  - name: v2
     labels:
-      version: canary
+      version: v2
