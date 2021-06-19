@@ -38,7 +38,7 @@ pipeline {
 		//sh "sed -i 's/helloworld:latest/${Docker_Image_Version}/g' deploy.yaml"
 		//step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istiogreen.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-		sh "echo 'Blue Green Deployment Completed. "
+		sh "echo 'Blue Green Deployment Completed.' "
             }
         }
     }
