@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 // App
 const app = express();
 app.get('/', function (req, res) {
-  res.send('Hello Sitesh Welcome to new page - v1\n');
+  res.send('Hello Sitesh Welcome to new page - v2\n');
 });
 app.get('/health-check', function (req, res) {
   res.send('Health Check Passed\n');
