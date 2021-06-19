@@ -32,12 +32,11 @@ pipeline {
         }
         stage('Deployment to PROD - Green') {
             steps {
-		input message: 'Proceed to Green Deployment ?'
-		sh "sed -i 's/${CANARY_REPLICAS}/0/g' canary.yaml"
-		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-		sh "sed -i 's/helloworld:latest/${Docker_Image_Version}/g' deploy.yaml"
-		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-                input message: 'Switch traffic to green', parameters: [string(defaultValue: '100', description: 'Switch complete traffic to Green', name: 'CompleteBlueGreen')]
+		input message: 'Proceed to Green Deployment - Switch taffic to Green ?'
+		//sh "sed -i 's/${CANARY_REPLICAS}/0/g' canary.yaml"
+		//step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+		//sh "sed -i 's/helloworld:latest/${Docker_Image_Version}/g' deploy.yaml"
+		//step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 		sh "sed -i 's/${Canary_Route}/0/g' istio.yaml"
 		sh "sed -i 's/${Prod_Route}/100/g' istio.yaml"
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istio.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
