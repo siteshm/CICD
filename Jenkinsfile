@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Setup parameters') {
             steps {
-                script { properties([parameters([string(defaultValue: 'helloworld:2', description: 'Please enter Docker Image Version', name: 'Docker_Image_Version'), string(defaultValue: '10', description: 'Canary routing weight', name: 'Canary_Route')])])
+                script { properties([parameters([string(defaultValue: 'helloworld:2', description: 'Please enter Docker Image Version', name: 'Docker_Image_Version')])])
                        }
             }
         }
