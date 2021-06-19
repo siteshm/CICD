@@ -15,7 +15,7 @@ pipeline {
         }
         stage("Checkout code") {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/canary_test']], extensions: [], userRemoteConfigs: [[credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/siteshm/CICD.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/test_istio']], extensions: [], userRemoteConfigs: [[credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/siteshm/CICD.git']]])
             }
         }
         stage("Build image") {
