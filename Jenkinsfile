@@ -42,6 +42,7 @@ pipeline {
 			    //CANARY_REPLICAS = 3
 			//}
             steps{
+		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'service.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
                 sh "sed -i 's/helloworld:canary/hello:${env.BUILD_ID}/g' canary.yaml"
                 //sh "sed -i 's/MaxSurge/${MaxSurge}/g' canary.yaml"
                 //sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' canary.yaml"
