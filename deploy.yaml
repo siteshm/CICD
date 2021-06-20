@@ -33,6 +33,12 @@ spec:
             port: 5000
           initialDelaySeconds: 5
           periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health-check
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
 
 ---
 apiVersion: v1
