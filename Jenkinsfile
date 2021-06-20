@@ -23,11 +23,11 @@ pipeline {
         stage('Deploy to Kubernetes cluster - Rolling Update ') {
             steps{
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'service.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-                sh "sed -i 's/CANARY_REPLICAS/${CANARY_REPLICAS}/g' deploy.yaml" 
-                sh "sed -i 's/MaxSurge/${MaxSurge}/g' deploy.yaml"
-                sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' deploy.yaml"
-                sh "sed -i 's/helloworld:latest/${Docker_Image_Version}/g' deploy.yaml"
-                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+                sh "sed -i 's/CANARY_REPLICAS/${CANARY_REPLICAS}/g' canary.yaml" 
+                sh "sed -i 's/MaxSurge/${MaxSurge}/g' canary.yaml"
+                sh "sed -i 's/MaxUnavailable/${MaxUnavailable}/g' canary.yaml"
+                sh "sed -i 's/helloworld:canary/${Docker_Image_Version}/g' canary.yaml"
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
         }
     }    
