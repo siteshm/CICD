@@ -3,7 +3,7 @@ pipeline {
     environment {
         PROJECT_ID = 'arctic-robot-278510'
         CLUSTER_NAME = 'istio'
-        LOCATION = 'us-central1-c'
+        LOCATION = 'us-east1'
         CREDENTIALS_ID = 'gke'
     }
     stages {
