@@ -2,16 +2,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: helloworld-v2
+  name: helloworld-v1
   labels:
     app: helloworld
-    version: v2
+    version: v1
 spec:
   replicas: CANARY_REPLICAS
   selector:
     matchLabels:
       app: helloworld
-      version: v2
+      version: v1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -21,11 +21,11 @@ spec:
     metadata:
       labels:
         app: helloworld
-        version: v2
+        version: v1
     spec:
       containers:
       - name: helloworld
-        image: siteshm/helloworld:canary
+        image: siteshm/helloworld:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
