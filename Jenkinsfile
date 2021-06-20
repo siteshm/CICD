@@ -2,8 +2,8 @@ pipeline {
     agent any
     environment {
         PROJECT_ID = 'arctic-robot-278510'
-        CLUSTER_NAME = 'cluster-1'
-        LOCATION = 'us-central1-c'
+        CLUSTER_NAME = 'istio'
+        LOCATION = 'us-east1'
         CREDENTIALS_ID = 'gke'
     }
     stages {
