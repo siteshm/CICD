@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         PROJECT_ID = 'arctic-robot-278510'
-        CLUSTER_NAME = 'cluster-1'
+        CLUSTER_NAME = 'istio'
         LOCATION = 'us-central1-c'
         CREDENTIALS_ID = 'gke'
     }
