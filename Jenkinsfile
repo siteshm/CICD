@@ -32,11 +32,7 @@ pipeline {
         }
         stage('Deployment to PROD - Green') {
             steps {
-		input message: 'Proceed to Green Deployment - Switch taffic to Green ?'
-		//sh "sed -i 's/${CANARY_REPLICAS}/0/g' canary.yaml"
-		//step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'canary.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-		//sh "sed -i 's/helloworld:latest/${Docker_Image_Version}/g' deploy.yaml"
-		//step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deploy.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+		input message: 'Proceed to Green Deployment - Switch traffic to Green ?'
 		step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'istiogreen.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 		sh "echo 'Blue Green Deployment Completed.' "
             }
