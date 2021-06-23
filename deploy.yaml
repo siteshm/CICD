@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Hello_Flagger
+  name: hello-flagger
   labels:
-    app: Hello_Flagger
+    app: hello-flagger
 spec:
   selector:
     matchLabels:
-      app: Hello_Flagger
+      app: hello-flagger
   template:
     metadata:
       labels:
-        app: Hello_Flagger
+        app: hello-flagger
     spec:
       containers:
-      - name: Hello_Flagger
+      - name: hello-flagger
         image: siteshm/hello:latest
         imagePullPolicy: Always
         ports:
