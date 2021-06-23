@@ -2,18 +2,18 @@
 apiVersion: flagger.app/v1beta1
 kind: Canary
 metadata:
-  name: Hello_Flagger
+  name: hello-flagger
 spec:
   provider: istio
   targetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: Hello_Flagger
+    name: hello-flagger
   progressDeadlineSeconds: 60
   autoscalerRef:
     apiVersion: autoscaling/v2beta1
     kind: HorizontalPodAutoscaler
-    name: Hello_Flagger
+    name: hello-flagger
   service:
     port: 80
     targetPort: 5000
