@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Setup parameters') {
             steps {
-                script { properties([parameters([string(defaultValue: 'helloworld:latest', description: 'Please enter Docker Latest Image Version', name: 'Docker_Image_Version')])])
+                script { properties([parameters([string(defaultValue: 'hello:latest', description: 'Please enter Docker Latest Image Version', name: 'Docker_Image_Version')])])
                        }
             }
         }
