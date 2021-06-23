@@ -15,8 +15,9 @@ spec:
     kind: HorizontalPodAutoscaler
     name: hello-flagger
   service:
-    port: 80
+    port: 5000
     targetPort: 5000
+    name: hello-flagger
     gateways:
     - hello-gateway
     hosts:
