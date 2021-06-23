@@ -2,12 +2,12 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: Hello_Flagger
+  name: hello-flagger
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: Hello_Flagger
+    name: hello-flagger
   minReplicas: 2
   maxReplicas: 6
   metrics:
