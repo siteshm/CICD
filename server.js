@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 // App
 const app = express();
 app.get('/', function (req, res) {
-  res.send('Hello world -Check New Version on EKS\n');
+  res.send('Hello world -Check New Version on EKS - Canary \n');
 });
 app.get('/health-check', function (req, res) {
   res.send('Health Check Passed\n');
