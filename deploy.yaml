@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: hello-flagger
-        image: siteshm/hello:latest
+        image: siteshm/helloworldeks:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
