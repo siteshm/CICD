@@ -26,7 +26,7 @@ pipeline {
         }   
         stage('Deploy to Kubernetes cluster - Canary Release ') {
             steps{
-                sh "sed -i 's/helloworldeks:latest/${Docker_Image_Version}/g' deploy.yaml"
+                sh "sed -i 's/helloworldeks:latest/helloworldeks:${env.BUILD_ID}/g' deploy.yaml"
                 sh 'kubectl apply -f service.yaml'
                 sh 'kubectl apply -f istio.yaml'
                 sh 'kubectl apply -f deploy.yaml'
